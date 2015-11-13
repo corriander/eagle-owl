@@ -69,6 +69,29 @@
                                    "  NEW.ch1_kw_avg/1000);"                    \
                                    " END;"
 
+// This view provides more accurately named, useful quantities.
+// Current [A] is the principle quantity, with power [W] derived from 
+// it. Energy consumption is derived from the energy (W-h, not kw!)
+// quantity in the energy_history table and provided in the SI units
+// kilojoule and the common domestic unit kW-h. The conversion factor
+// of 3.6 is from E [kJ] = (P [W] / 1000 [W/kW]) * dt [s] where dt is
+// the time period (60 s sample rate in database). 
+#define CREATE_QUANTITY_VW  "CREATE VIEW quantity_vw AS"                       \
+                            " SELECT"                                          \
+                            "   year"                                          \
+                            "     || '-' || substr('00' || month, -2, 2)"      \
+                            "     || '-' || substr('00' || day, -2, 2)"        \
+                            "     || 'T' || substr('00' || hour, -2, 2)"       \
+                            "     || ':' || substr('00' || min, -2, 2)"        \
+                            "     AS timestamp,"                               \
+                            "   ch1_amps_avg * 60 AS current,"                 \
+                            "   ch1_kw_avg * 60 AS power,"                     \
+                            "   ch1_kw_avg * 3.6 AS energy,"                   \
+                            "   ch1_kw_avg * 0.001 AS energy_kwh"              \
+                            " FROM energy_history"                             \
+                            " ORDER BY timestamp"                              \
+                            ";"
+
 #define DELETE_UPDATE_STAT_TRIGGER "DROP TRIGGER IF EXISTS updatestat_cb;"
 
 // record_count: number of minutes records that have been used to compute the stat

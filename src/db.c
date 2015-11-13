@@ -56,6 +56,7 @@ static int create_main_db()
   SQL_EXEC(db, CREATE_PARAM_TBL, "Create energy_param table");
   SQL_EXEC(db, CREATE_SENSOR_TBL, "Create energy_sensor table");
   SQL_EXEC(db, CREATE_TARIFFV2_TBL, "Create energy_tariffv2 table");
+  SQL_EXEC(db, CREATE_QUANTITY_VW, "Create quantity_vw view");
 
   return ret;
 }
